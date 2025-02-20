@@ -3,15 +3,16 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://your-github-username.github.io/scandiweb",
+  "homepage": "https://jessy-hub-hub.github.io",
   "scripts": {
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "postbuild": "copy .nojekyll docs",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d docs"
+"deploy": "gh-pages -b main -d docs"
   },
   "dependencies": {
     "@apollo/client": "^3.12.4",

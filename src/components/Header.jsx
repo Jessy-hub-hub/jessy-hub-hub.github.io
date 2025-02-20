@@ -20,6 +20,11 @@ const Header = () => {
       ? { "data-testid": "active-category-link", className: "active" }
       : { "data-testid": "category-link" };
 
+  // Toggle the cart overlay on button click
+  const toggleCart = () => {
+    setIsCartOpen((prev) => !prev);
+  };
+
   return (
     <header className="header">
       <nav>
@@ -33,7 +38,7 @@ const Header = () => {
           clothes
         </Link>
       </nav>
-      <button data-testid="cart-btn" onClick={() => setIsCartOpen(true)}>
+      <button data-testid="cart-btn" onClick={toggleCart}>
         Cart{" "}
         {itemCount > 0 && (
           <span>
