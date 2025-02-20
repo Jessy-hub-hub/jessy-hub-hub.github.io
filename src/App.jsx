@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import CartOverlay from "./components/CartOverlay";
 import { CartProvider } from "./context/CartContext";
@@ -13,22 +13,20 @@ function App() {
 
   return (
     <CartProvider>
-      <Router>
-        <Header toggleOverlay={toggleOverlay} />
-        {isOverlayVisible && <CartOverlay onClose={toggleOverlay} />}
-        <Routes>
-          <Route path="/" element={<ProductListingPage />} />
-          <Route path="/all" element={<ProductListingPage />} />
-          <Route path="/tech" element={<ProductListingPage />} />
-          <Route path="/clothes" element={<ProductListingPage />} />
-          {/* IMPORTANT: PDP route uses ":slug" */}
-          <Route
-            path="/product/:slug"
-            element={<ProductDetailsPage toggleOverlay={toggleOverlay} />}
-          />
-          <Route path="*" element={<ProductListingPage />} />
-        </Routes>
-      </Router>
+      <Header toggleOverlay={toggleOverlay} />
+      {isOverlayVisible && <CartOverlay onClose={toggleOverlay} />}
+      <Routes>
+        <Route path="/" element={<ProductListingPage />} />
+        <Route path="/all" element={<ProductListingPage />} />
+        <Route path="/tech" element={<ProductListingPage />} />
+        <Route path="/clothes" element={<ProductListingPage />} />
+        {/* IMPORTANT: PDP route uses ":slug" */}
+        <Route
+          path="/product/:slug"
+          element={<ProductDetailsPage toggleOverlay={toggleOverlay} />}
+        />
+        <Route path="*" element={<ProductListingPage />} />
+      </Routes>
     </CartProvider>
   );
 }
