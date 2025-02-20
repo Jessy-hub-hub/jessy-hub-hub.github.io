@@ -7,27 +7,39 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [isCartOverlayOpen, setIsCartOverlayOpen] = useState(false);
 
-  const addToCart = (product, options) => {
+  const addToCart = (product, options = {}) => {
+    // Default any missing attributes to the first available option.
+    const finalOptions = { ...options };
+    if (product.attributes && product.attributes.length > 0) {
+      product.attributes.forEach((attr) => {
+        if (!(attr.id in finalOptions)) {
+          finalOptions[attr.id] = attr.items[0].value;
+        }
+      });
+    }
+
     setCart((prevCart) => {
+      // Look for an existing item with the same product id and options.
       const existingItem = prevCart.find(
         (item) =>
           item.id === product.id &&
-          JSON.stringify(item.options) === JSON.stringify(options)
+          JSON.stringify(item.options) === JSON.stringify(finalOptions)
       );
 
       if (existingItem) {
+        // Increase its quantity.
         return prevCart.map((item) =>
           item.id === product.id &&
-          JSON.stringify(item.options) === JSON.stringify(options)
+          JSON.stringify(item.options) === JSON.stringify(finalOptions)
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        return [...prevCart, { ...product, options, quantity: 1 }];
+        return [...prevCart, { ...product, options: finalOptions, quantity: 1 }];
       }
     });
-    console.log("Added to cart:", product.name, "with options:", options);
-    // Open the overlay when an item is added
+    console.log("Added to cart:", product.name, "with options:", finalOptions);
+    // Open the cart overlay when a product is added.
     setIsCartOverlayOpen(true);
   };
 
@@ -49,6 +61,7 @@ export const CartProvider = ({ children }) => {
     setCart([]);
   };
 
+  // Helper functions to control the cart overlay
   const openCartOverlay = () => setIsCartOverlayOpen(true);
   const closeCartOverlay = () => setIsCartOverlayOpen(false);
   const toggleCartOverlay = () => setIsCartOverlayOpen((prev) => !prev);
