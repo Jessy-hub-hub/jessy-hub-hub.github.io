@@ -20,9 +20,9 @@ const Header = () => {
       ? { "data-testid": "active-category-link", className: "active" }
       : { "data-testid": "category-link" };
 
-  // Toggle the cart overlay on button click
+  // Modified: clicking the cart button now ensures the overlay is closed
   const toggleCart = () => {
-    setIsCartOpen((prev) => !prev);
+    setIsCartOpen(false);
   };
 
   return (
