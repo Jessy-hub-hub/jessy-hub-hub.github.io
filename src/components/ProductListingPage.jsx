@@ -2,7 +2,7 @@ import React from "react";
 import { gql, useQuery } from "@apollo/client";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { slugify } from "../utils/slugify.js";// import your slugify helper
+import { slugify } from "../utils/slugify";
 import "./ProductListingPage.css";
 
 const GET_CATEGORIES_AND_PRODUCTS = gql`
@@ -39,14 +39,14 @@ const ProductListingPage = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
 
-  // Figure out which category is in the URL path, e.g. /tech => "tech"
+  // Determine category from URL path; default to "all" (the “all listing”)
   const segments = location.pathname.split("/").filter(Boolean);
   const selectedCategory = segments[0] || "all";
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  // Filter products by category or show all
+  // When category is "all", show every product.
   const filteredProducts =
     selectedCategory === "all"
       ? data.products
@@ -68,8 +68,9 @@ const ProductListingPage = () => {
   };
 
   const handleProductClick = (product) => {
-    // Navigate to /product/<slugified-name>
+    // Generate a slug using the product name
     const slug = slugify(product.name);
+    // Navigate to /product/:slug
     navigate(`/product/${slug}`);
   };
 
@@ -81,12 +82,11 @@ const ProductListingPage = () => {
 
       <div className="product-grid">
         {filteredProducts.map((product) => {
-          const slug = slugify(product.name); // e.g. "PlayStation 5" => "playstation-5"
+          const slug = slugify(product.name); // e.g., "PlayStation 5" → "playstation-5"
           return (
             <div
               key={product.id}
               className={`product-card ${product.inStock ? "" : "out-of-stock"}`}
-              // The test expects data-testid="product-playstation-5"
               data-testid={`product-${slug}`}
               onClick={() => handleProductClick(product)}
             >
