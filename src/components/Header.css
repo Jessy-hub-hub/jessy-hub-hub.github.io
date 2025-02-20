@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   background: white;
-  z-index: 1100; /* Higher than the overlay and backdrop */
+  z-index: 1100;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -61,4 +61,8 @@
 .header button[data-testid="cart-btn"] span {
   font-size: 0.9rem;
   margin-left: 0.5rem;
+}
+
+.hidden {
+  display: none;
 }

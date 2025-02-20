@@ -1,3 +1,4 @@
+// components/ProductDetailsPage.js
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
@@ -6,14 +7,12 @@ import { useCart } from "../context/CartContext";
 import { slugify } from "../utils/slugify.js";
 import "./ProductDetailsPage.css";
 
-// Use the same custom helper as in the listing page
 const getSlug = (product) => {
   if (product.id === "ps-5") return "playstation-5";
   return slugify(product.name);
 };
 
-const ProductDetailsPage = ({ toggleOverlay }) => {
-  // Get the URL parameter "slug" (which should be "playstation-5" for PS)
+const ProductDetailsPage = () => {
   const { slug } = useParams();
   const { loading, error, data } = useQuery(GET_PRODUCT_BY_ID);
   const [selectedAttributes, setSelectedAttributes] = useState({});
@@ -23,7 +22,6 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  // Find the product by matching the overridden slug to the URL parameter
   const product = data.products.find((p) => getSlug(p) === slug);
   if (!product) return <p>Product not found.</p>;
 
@@ -50,7 +48,7 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
   const handleAddToCart = () => {
     const productWithPrice = { ...product, price: product.prices[0] };
     addToCart(productWithPrice, selectedAttributes);
-    if (toggleOverlay) toggleOverlay();
+    // No need to toggle overlay here—the CartContext addToCart opens it.
   };
 
   return (

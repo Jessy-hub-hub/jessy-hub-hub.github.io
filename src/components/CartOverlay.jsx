@@ -25,10 +25,10 @@ const CREATE_ORDER = gql`
   }
 `;
 
-const CartOverlay = ({ onClose }) => {
+const CartOverlay = ({ isOpen, onClose }) => {
   const { cart, updateQuantity, clearCart, removeFromCart } = useCart();
 
-  // Always use the real cart data—no dummy items in test mode
+  // Always use the real cart data
   const displayCart = cart;
 
   // Calculate total items and total price
@@ -64,32 +64,26 @@ const CartOverlay = ({ onClose }) => {
     }
   };
 
-  // Renders the overlay via a portal
   const overlayContent = (
     <>
-      {/* Clicking the backdrop calls onClose to hide the overlay */}
-      <div className="backdrop" onClick={onClose} />
+      {isOpen && <div className="backdrop" onClick={onClose} />}
       <div
         className="cart-overlay"
         data-testid="cart-overlay"
         role="dialog"
-        style={{ display: "flex" }}
+        style={{ display: isOpen ? "flex" : "none" }}
       >
         <h3>
           My Bag, {totalQuantity} {totalQuantity === 1 ? "Item" : "Items"}
         </h3>
         <div className="cart-items-container">
           {displayCart.map((item) => {
-            // Unique slug for each product
             const slug = getSlug(item);
-            // Use either "selectedAttributes" or "options" to get chosen attributes
             const attributesToRender = item.selectedAttributes || item.options;
-
             return (
               <div key={item.id} className="cart-item" data-testid={`product-${slug}`}>
                 <div className="cart-item-details">
                   <p className="cart-item-name">{item.name}</p>
-                  {/* Render each attribute with a data-testid for tests */}
                   {attributesToRender &&
                     Object.entries(attributesToRender).map(([attrKey, value]) => (
                       <p

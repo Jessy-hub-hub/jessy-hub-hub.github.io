@@ -1,15 +1,14 @@
+// context/CartContext.js
 import React, { createContext, useState, useContext } from "react";
 
-// Create the context (this remains internal to the module)
 const CartContext = createContext();
 
-// The provider is a React component, which is safe for Fast Refresh.
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
+  const [isCartOverlayOpen, setIsCartOverlayOpen] = useState(false);
 
   const addToCart = (product, options) => {
     setCart((prevCart) => {
-      // Look for an existing item with the same product id and options.
       const existingItem = prevCart.find(
         (item) =>
           item.id === product.id &&
@@ -17,7 +16,6 @@ export const CartProvider = ({ children }) => {
       );
 
       if (existingItem) {
-        // If found, increase its quantity.
         return prevCart.map((item) =>
           item.id === product.id &&
           JSON.stringify(item.options) === JSON.stringify(options)
@@ -25,11 +23,12 @@ export const CartProvider = ({ children }) => {
             : item
         );
       } else {
-        // Otherwise, add it as a new item.
         return [...prevCart, { ...product, options, quantity: 1 }];
       }
     });
     console.log("Added to cart:", product.name, "with options:", options);
+    // Open the overlay when an item is added
+    setIsCartOverlayOpen(true);
   };
 
   const removeFromCart = (product) => {
@@ -50,14 +49,27 @@ export const CartProvider = ({ children }) => {
     setCart([]);
   };
 
+  const openCartOverlay = () => setIsCartOverlayOpen(true);
+  const closeCartOverlay = () => setIsCartOverlayOpen(false);
+  const toggleCartOverlay = () => setIsCartOverlayOpen((prev) => !prev);
+
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart }}
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        isCartOverlayOpen,
+        openCartOverlay,
+        closeCartOverlay,
+        toggleCartOverlay,
+      }}
     >
       {children}
     </CartContext.Provider>
   );
 };
 
-// Export a custom hook that encapsulates useContext for consuming the cart.
 export const useCart = () => useContext(CartContext);
