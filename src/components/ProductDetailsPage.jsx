@@ -3,11 +3,11 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_PRODUCT_BY_ID } from "../graphql/queries";
 import { useCart } from "../context/CartContext";
-import { slugify } from "../utils/slugify";
+import { slugify } from "../utils/slugify.js";
 import "./ProductDetailsPage.css";
 
 const ProductDetailsPage = ({ toggleOverlay }) => {
-  // Use "slug" from URL instead of "id"
+  // 1) The URL param is "slug" (NOT "ps-5" but "playstation-5")
   const { slug } = useParams();
   const { loading, error, data } = useQuery(GET_PRODUCT_BY_ID);
   const [selectedAttributes, setSelectedAttributes] = useState({});
@@ -17,12 +17,14 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  // Find the product by comparing the slugified name with the URL slug
-  const product = data.products.find(
-    (p) => slugify(p.name) === slug
-  );
-  if (!product) return <p>Product not found.</p>;
+  // 2) Find the product by matching slugify(p.name) to the route param
+  const product = data.products.find((p) => slugify(p.name) === slug);
 
+  if (!product) {
+    return <p>Product not found.</p>;
+  }
+
+  // 3) Additional logic for images, attributes, etc.
   const handleImageNavigation = (direction) => {
     if (direction === "prev") {
       setCurrentImageIndex((prevIndex) =>
@@ -39,9 +41,17 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
     setSelectedAttributes((prev) => ({ ...prev, [attributeId]: value }));
   };
 
-  const allAttributesSelected = product.attributes.every((attribute) =>
-    selectedAttributes.hasOwnProperty(attribute.id)
+  const allAttributesSelected = product.attributes.every((attr) =>
+    selectedAttributes.hasOwnProperty(attr.id)
   );
+
+  const handleAddToCart = () => {
+    const productWithPrice = { ...product, price: product.prices[0] };
+    addToCart(productWithPrice, selectedAttributes);
+    if (toggleOverlay) {
+      toggleOverlay();
+    }
+  };
 
   return (
     <div className="product-details-page" data-testid={`product-${slug}`}>
@@ -52,9 +62,7 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
               key={index}
               src={img}
               alt={`Thumbnail ${index}`}
-              className={
-                currentImageIndex === index ? "thumbnail active" : "thumbnail"
-              }
+              className={currentImageIndex === index ? "thumbnail active" : "thumbnail"}
               onClick={() => setCurrentImageIndex(index)}
             />
           ))}
@@ -90,13 +98,9 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
               {attribute.items.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() =>
-                    handleAttributeSelect(attribute.id, item.value)
-                  }
+                  onClick={() => handleAttributeSelect(attribute.id, item.value)}
                   className={`attribute-button ${
-                    selectedAttributes[attribute.id] === item.value
-                      ? "selected"
-                      : ""
+                    selectedAttributes[attribute.id] === item.value ? "selected" : ""
                   }`}
                   style={
                     attribute.type === "swatch"
@@ -121,11 +125,7 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
           className="add-to-cart-btn"
           data-testid="add-to-cart"
           disabled={!allAttributesSelected}
-          onClick={() => {
-            const productWithPrice = { ...product, price: product.prices[0] };
-            addToCart(productWithPrice, selectedAttributes);
-            toggleOverlay();
-          }}
+          onClick={handleAddToCart}
         >
           Add to Cart
         </button>
