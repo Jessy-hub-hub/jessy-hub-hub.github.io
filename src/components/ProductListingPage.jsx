@@ -39,14 +39,14 @@ const ProductListingPage = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
 
-  // 1) Determine which category to show (default to "all")
+  // 1) Determine the current category from the URL path (default to "all")
   const segments = location.pathname.split("/").filter(Boolean);
   const selectedCategory = segments[0] || "all";
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  // 2) Filter products by category if needed, else show all
+  // 2) Filter by category or show all
   const filteredProducts =
     selectedCategory === "all"
       ? data.products
@@ -58,12 +58,12 @@ const ProductListingPage = () => {
     navigate(`/product/${slug}`);
   };
 
-  // (Optional) Quick Shop
+  // (Optional) "Quick Shop" button that adds product to cart immediately
   const handleQuickShop = (e, product) => {
-    e.stopPropagation();
+    e.stopPropagation(); // prevent the card's onClick from firing
     const defaultOptions =
       product.attributes?.reduce((acc, attribute) => {
-        if (attribute.items?.length) {
+        if (attribute.items && attribute.items.length > 0) {
           acc[attribute.id] = attribute.items[0].value;
         }
         return acc;
@@ -82,12 +82,14 @@ const ProductListingPage = () => {
 
       <div className="product-grid">
         {filteredProducts.map((product) => {
-          const slug = slugify(product.name); // "PlayStation 5" -> "playstation-5"
+          // For "PlayStation 5", slug will be "playstation-5"
+          const slug = slugify(product.name);
+
           return (
             <div
               key={product.id}
               className={`product-card ${product.inStock ? "" : "out-of-stock"}`}
-              data-testid={`product-${slug}`} // => product-playstation-5
+              data-testid={`product-${slug}`} // => "product-playstation-5"
               onClick={() => handleProductClick(product)}
             >
               <div className="image-container">
@@ -96,6 +98,7 @@ const ProductListingPage = () => {
                   <div className="out-of-stock-overlay">Out of Stock</div>
                 )}
               </div>
+
               <div className="product-details">
                 <p className="product-name">{product.name}</p>
                 <p className="product-price">
@@ -103,6 +106,7 @@ const ProductListingPage = () => {
                   {product.prices[0]?.amount.toFixed(2)}
                 </p>
               </div>
+
               {product.inStock && (
                 <button
                   className="quick-shop"

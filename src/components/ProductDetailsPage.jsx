@@ -7,7 +7,7 @@ import { slugify } from "../utils/slugify.js";
 import "./ProductDetailsPage.css";
 
 const ProductDetailsPage = ({ toggleOverlay }) => {
-  // 1) The URL param is "slug" (NOT "ps-5" but "playstation-5")
+  // 1) The URL param is "slug" (e.g. "playstation-5")
   const { slug } = useParams();
   const { loading, error, data } = useQuery(GET_PRODUCT_BY_ID);
   const [selectedAttributes, setSelectedAttributes] = useState({});
@@ -17,14 +17,14 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  // 2) Find the product by matching slugify(p.name) to the route param
+  // 2) Find the product by comparing slugify(p.name) to the route param
   const product = data.products.find((p) => slugify(p.name) === slug);
 
   if (!product) {
     return <p>Product not found.</p>;
   }
 
-  // 3) Additional logic for images, attributes, etc.
+  // 3) Handle images, attributes, etc.
   const handleImageNavigation = (direction) => {
     if (direction === "prev") {
       setCurrentImageIndex((prevIndex) =>
@@ -67,6 +67,7 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
             />
           ))}
         </div>
+
         <div className="main-image-wrapper">
           <button
             className="arrow left-arrow"
