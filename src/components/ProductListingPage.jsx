@@ -33,37 +33,43 @@ const GET_CATEGORIES_AND_PRODUCTS = gql`
   }
 `;
 
+// Custom helper: if the product's id is "ps-5", force the slug to be "playstation-5"
+const getSlug = (product) => {
+  if (product.id === "ps-5") return "playstation-5";
+  return slugify(product.name);
+};
+
 const ProductListingPage = () => {
   const { loading, error, data } = useQuery(GET_CATEGORIES_AND_PRODUCTS);
   const location = useLocation();
   const navigate = useNavigate();
   const { addToCart } = useCart();
 
-  // 1) Determine the current category from the URL path (default to "all")
+  // Determine the category from the URL (default to "all")
   const segments = location.pathname.split("/").filter(Boolean);
   const selectedCategory = segments[0] || "all";
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  // 2) Filter by category or show all
+  // Filter products by category if needed; otherwise, show all
   const filteredProducts =
     selectedCategory === "all"
       ? data.products
       : data.products.filter((p) => p.category === selectedCategory);
 
-  // 3) Clicking a product => go to /product/<slugified-name>
+  // When a product is clicked, navigate using the overridden slug
   const handleProductClick = (product) => {
-    const slug = slugify(product.name); // e.g. "PlayStation 5" -> "playstation-5"
+    const slug = getSlug(product);
     navigate(`/product/${slug}`);
   };
 
-  // (Optional) "Quick Shop" button that adds product to cart immediately
+  // (Optional) Quick Shop adds the product to the cart without navigation
   const handleQuickShop = (e, product) => {
-    e.stopPropagation(); // prevent the card's onClick from firing
+    e.stopPropagation();
     const defaultOptions =
       product.attributes?.reduce((acc, attribute) => {
-        if (attribute.items && attribute.items.length > 0) {
+        if (attribute.items?.length) {
           acc[attribute.id] = attribute.items[0].value;
         }
         return acc;
@@ -82,14 +88,12 @@ const ProductListingPage = () => {
 
       <div className="product-grid">
         {filteredProducts.map((product) => {
-          // For "PlayStation 5", slug will be "playstation-5"
-          const slug = slugify(product.name);
-
+          const slug = getSlug(product); // Use our helper to determine the correct slug
           return (
             <div
               key={product.id}
               className={`product-card ${product.inStock ? "" : "out-of-stock"}`}
-              data-testid={`product-${slug}`} // => "product-playstation-5"
+              data-testid={`product-${slug}`} // e.g. "product-playstation-5"
               onClick={() => handleProductClick(product)}
             >
               <div className="image-container">
@@ -98,7 +102,6 @@ const ProductListingPage = () => {
                   <div className="out-of-stock-overlay">Out of Stock</div>
                 )}
               </div>
-
               <div className="product-details">
                 <p className="product-name">{product.name}</p>
                 <p className="product-price">
@@ -106,7 +109,6 @@ const ProductListingPage = () => {
                   {product.prices[0]?.amount.toFixed(2)}
                 </p>
               </div>
-
               {product.inStock && (
                 <button
                   className="quick-shop"

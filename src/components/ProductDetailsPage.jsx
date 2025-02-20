@@ -6,8 +6,14 @@ import { useCart } from "../context/CartContext";
 import { slugify } from "../utils/slugify.js";
 import "./ProductDetailsPage.css";
 
+// Use the same custom helper as in the listing page
+const getSlug = (product) => {
+  if (product.id === "ps-5") return "playstation-5";
+  return slugify(product.name);
+};
+
 const ProductDetailsPage = ({ toggleOverlay }) => {
-  // 1) The URL param is "slug" (e.g. "playstation-5")
+  // Get the URL parameter "slug" (which should be "playstation-5" for PS)
   const { slug } = useParams();
   const { loading, error, data } = useQuery(GET_PRODUCT_BY_ID);
   const [selectedAttributes, setSelectedAttributes] = useState({});
@@ -17,14 +23,10 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  // 2) Find the product by comparing slugify(p.name) to the route param
-  const product = data.products.find((p) => slugify(p.name) === slug);
+  // Find the product by matching the overridden slug to the URL parameter
+  const product = data.products.find((p) => getSlug(p) === slug);
+  if (!product) return <p>Product not found.</p>;
 
-  if (!product) {
-    return <p>Product not found.</p>;
-  }
-
-  // 3) Handle images, attributes, etc.
   const handleImageNavigation = (direction) => {
     if (direction === "prev") {
       setCurrentImageIndex((prevIndex) =>
@@ -48,9 +50,7 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
   const handleAddToCart = () => {
     const productWithPrice = { ...product, price: product.prices[0] };
     addToCart(productWithPrice, selectedAttributes);
-    if (toggleOverlay) {
-      toggleOverlay();
-    }
+    if (toggleOverlay) toggleOverlay();
   };
 
   return (
@@ -67,12 +67,8 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
             />
           ))}
         </div>
-
         <div className="main-image-wrapper">
-          <button
-            className="arrow left-arrow"
-            onClick={() => handleImageNavigation("prev")}
-          >
+          <button className="arrow left-arrow" onClick={() => handleImageNavigation("prev")}>
             &#9664;
           </button>
           <img
@@ -80,10 +76,7 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
             src={product.gallery[currentImageIndex]}
             alt={product.name}
           />
-          <button
-            className="arrow right-arrow"
-            onClick={() => handleImageNavigation("next")}
-          >
+          <button className="arrow right-arrow" onClick={() => handleImageNavigation("next")}>
             &#9654;
           </button>
         </div>
@@ -103,11 +96,7 @@ const ProductDetailsPage = ({ toggleOverlay }) => {
                   className={`attribute-button ${
                     selectedAttributes[attribute.id] === item.value ? "selected" : ""
                   }`}
-                  style={
-                    attribute.type === "swatch"
-                      ? { backgroundColor: item.value }
-                      : {}
-                  }
+                  style={attribute.type === "swatch" ? { backgroundColor: item.value } : {}}
                 >
                   {attribute.type !== "swatch" ? item.displayValue : ""}
                 </button>

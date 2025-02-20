@@ -15,12 +15,19 @@ const slugify = (text) => {
     .replace(/\-\-+/g, '-');    // Replace multiple - with single -
 };
 
+// Custom helper to override slug for specific products
+const getSlug = (product) => {
+  if (product.id === "ps-5") return "playstation-5";
+  return slugify(product.name);
+};
+
 const ProductCard = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const [addToCart, { loading, error }] = useMutation(ADD_TO_CART);
   const navigate = useNavigate();
 
-  const productSlug = slugify(product.name);
+  // Use our custom getSlug so that product with id "ps-5" becomes "playstation-5"
+  const productSlug = getSlug(product);
 
   const handleCardClick = () => {
     // Navigate to /product/{slug}

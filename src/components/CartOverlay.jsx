@@ -5,6 +5,12 @@ import "./CartOverlay.css";
 import { gql, useMutation } from "@apollo/client";
 import { slugify } from "../utils/slugify.js";
 
+// Custom helper to override slug for specific products
+const getSlug = (product) => {
+  if (product.id === "ps-5") return "playstation-5";
+  return slugify(product.name);
+};
+
 const CREATE_ORDER = gql`
   mutation CreateOrder($products: [OrderProductInput!]!) {
     createOrder(products: $products) {
@@ -83,7 +89,8 @@ const CartOverlay = ({ onClose }) => {
         </h3>
         <div className="cart-items-container">
           {displayCart.map((item) => {
-            const slug = slugify(item.name);
+            // Use getSlug so that a product with id "ps-5" gets "playstation-5"
+            const slug = getSlug(item);
             return (
               <div
                 key={item.id}

@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import CartOverlay from "./components/CartOverlay";
 import { CartProvider } from "./context/CartContext";
-import ProductListingPage from "./pages/ProductListingPage";
-import ProductDetailsPage from "./pages/ProductDetailsPage";
+import ProductListingPage from "./components/ProductListingPage";
+import ProductDetailsPage from "./components/ProductDetailsPage";
 import "./App.css";
 
 function App() {
