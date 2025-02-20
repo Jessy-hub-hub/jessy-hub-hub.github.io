@@ -48,12 +48,12 @@ const ProductDetailsPage = () => {
   const handleAddToCart = () => {
     const productWithPrice = { ...product, price: product.prices[0] };
     addToCart(productWithPrice, selectedAttributes);
-    // No need to toggle overlay here—the CartContext addToCart opens it.
   };
 
   return (
     <div className="product-details-page" data-testid={`product-${slug}`}>
-      <div className="product-image-section">
+      {/* Added data-testid for product gallery */}
+      <div className="product-image-section" data-testid="product-gallery">
         <div className="thumbnails">
           {product.gallery.map((img, index) => (
             <img
@@ -91,6 +91,8 @@ const ProductDetailsPage = () => {
                 <button
                   key={item.id}
                   onClick={() => handleAttributeSelect(attribute.id, item.value)}
+                  // Added data-testid for each attribute option button
+                  data-testid={`product-attribute-${attribute.id.toLowerCase()}-${item.value.toLowerCase()}`}
                   className={`attribute-button ${
                     selectedAttributes[attribute.id] === item.value ? "selected" : ""
                   }`}
