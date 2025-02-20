@@ -5,7 +5,7 @@ import "./CartOverlay.css";
 import { gql, useMutation } from "@apollo/client";
 import { slugify } from "../utils/slugify.js";
 
-// Custom helper to override slug for specific products
+// Helper: if the product is "ps-5", return a custom slug.
 const getSlug = (product) => {
   if (product.id === "ps-5") return "playstation-5";
   return slugify(product.name);
@@ -27,29 +27,18 @@ const CREATE_ORDER = gql`
 
 const CartOverlay = ({ onClose }) => {
   const { cart, updateQuantity, clearCart, removeFromCart } = useCart();
-  const isTestEnv = process.env.NODE_ENV === "test";
 
-  // Optionally inject a dummy item if cart is empty and in test env
-  const displayCart =
-    isTestEnv && cart.length === 0
-      ? [
-          {
-            id: "dummy-playstation-5",
-            name: "PlayStation 5",
-            quantity: 1,
-            price: { amount: 844.02, currency: { symbol: "$" } },
-            gallery: ["https://via.placeholder.com/80"],
-            options: {},
-          },
-        ]
-      : cart;
+  // Always use the real cart data—no dummy items in test mode
+  const displayCart = cart;
 
+  // Calculate total items and total price
   const totalQuantity = displayCart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = displayCart.reduce(
     (sum, item) => sum + (item.price?.amount || 0) * item.quantity,
     0
   );
 
+  // Mutation to simulate placing an order
   const [createOrder, { loading, error }] = useMutation(CREATE_ORDER, {
     onCompleted: () => {
       clearCart();
@@ -75,8 +64,10 @@ const CartOverlay = ({ onClose }) => {
     }
   };
 
+  // Renders the overlay via a portal
   const overlayContent = (
     <>
+      {/* Clicking the backdrop calls onClose to hide the overlay */}
       <div className="backdrop" onClick={onClose} />
       <div
         className="cart-overlay"
@@ -89,20 +80,24 @@ const CartOverlay = ({ onClose }) => {
         </h3>
         <div className="cart-items-container">
           {displayCart.map((item) => {
-            // Use getSlug so that a product with id "ps-5" gets "playstation-5"
+            // Unique slug for each product
             const slug = getSlug(item);
+            // Use either "selectedAttributes" or "options" to get chosen attributes
+            const attributesToRender = item.selectedAttributes || item.options;
+
             return (
-              <div
-                key={item.id}
-                className="cart-item"
-                data-testid={`product-${slug}`}
-              >
+              <div key={item.id} className="cart-item" data-testid={`product-${slug}`}>
                 <div className="cart-item-details">
                   <p className="cart-item-name">{item.name}</p>
-                  {item.options &&
-                    Object.keys(item.options).map((attrKey) => (
-                      <p key={attrKey} className="cart-item-option">
-                        {attrKey}: {item.options[attrKey]}
+                  {/* Render each attribute with a data-testid for tests */}
+                  {attributesToRender &&
+                    Object.entries(attributesToRender).map(([attrKey, value]) => (
+                      <p
+                        key={attrKey}
+                        className="cart-item-option"
+                        data-testid={`product-attribute-${attrKey.toLowerCase()}-${value.toLowerCase()}`}
+                      >
+                        {attrKey}: {value}
                       </p>
                     ))}
                   <p className="cart-item-price">
@@ -133,9 +128,7 @@ const CartOverlay = ({ onClose }) => {
         <button
           onClick={handlePlaceOrder}
           disabled={displayCart.length === 0 || loading}
-          className={`place-order-btn ${
-            displayCart.length === 0 ? "disabled" : "active"
-          }`}
+          className={`place-order-btn ${displayCart.length === 0 ? "disabled" : "active"}`}
         >
           {loading ? "Placing Order..." : "Place Order"}
         </button>
