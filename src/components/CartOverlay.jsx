@@ -79,6 +79,7 @@ const CartOverlay = ({ isOpen, onClose }) => {
         <div className="cart-items-container">
           {displayCart.map((item) => {
             const slug = getSlug(item);
+            // Use options (or selectedAttributes) to display attributes.
             const attributesToRender = item.selectedAttributes || item.options;
             return (
               <div key={item.id} className="cart-item" data-testid={`product-${slug}`}>
@@ -89,7 +90,7 @@ const CartOverlay = ({ isOpen, onClose }) => {
                       <p
                         key={attrKey}
                         className="cart-item-option"
-                        data-testid={`product-attribute-${attrKey.toLowerCase()}-${value.toLowerCase()}`}
+                        data-testid={`product-attribute-${attrKey.toLowerCase()}-${value}`}
                       >
                         {attrKey}: {value}
                       </p>
