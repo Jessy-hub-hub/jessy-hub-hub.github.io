@@ -73,9 +73,10 @@ const CartOverlay = ({ isOpen, onClose }) => {
         role="dialog"
         style={{ display: isOpen ? "flex" : "none" }}
       >
-        <h3>
-          My Bag, {totalQuantity} {totalQuantity === 1 ? "Item" : "Items"}
-        </h3>
+        {/* Updated Heading: Removed the cart count from the heading */}
+        <h3>My Bag</h3>
+        {/* Assume the cart button elsewhere shows the count, for example: */}
+        {/* <span data-testid="cart-btn">({totalQuantity} {totalQuantity === 1 ? "Item" : "Items"})</span> */}
         <div className="cart-items-container">
           {displayCart.map((item) => {
             const slug = getSlug(item);
