@@ -1,3 +1,4 @@
+// Variant 4 – Use a Helper Function for Test IDs
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
@@ -10,10 +11,13 @@ const getSlug = (product) => {
   return product.name.toLowerCase().replace(/\s+/g, '-');
 };
 
-// Helper function updated to preserve the original attribute value
+// Helper function to generate test IDs
 const getTestId = (attribute, value) => {
+  // Always lowercase the attribute id.
+  // For swatch (color) types, preserve the original value; otherwise, lowercase the value.
   const attrId = attribute.id.toLowerCase();
-  return `product-attribute-${attrId}-${value}`;
+  const val = attribute.type === "swatch" ? value : value.toLowerCase();
+  return `product-attribute-${attrId}-${val}`;
 };
 
 const ProductDetailsPage = () => {
