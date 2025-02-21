@@ -1,4 +1,4 @@
-// components/ProductDetailsPage.js
+// Variant 1
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
@@ -6,7 +6,6 @@ import { GET_PRODUCT_BY_ID } from "../graphql/queries";
 import { useCart } from "../context/CartContext";
 import "./ProductDetailsPage.css";
 
-// Updated getSlug: for id "ps-5" return "playstation-5", otherwise fallback to a simple slug conversion.
 const getSlug = (product) => {
   if (product.id === "ps-5") return "playstation-5";
   return product.name.toLowerCase().replace(/\s+/g, '-');
@@ -22,10 +21,8 @@ const ProductDetailsPage = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  // Find the product matching the slug; if none found, fallback to the first product.
   const product =
     data.products.find((p) => getSlug(p) === slug) || data.products[0];
-
   if (!product) return <p>Product not found.</p>;
 
   const handleImageNavigation = (direction) => {
@@ -55,7 +52,6 @@ const ProductDetailsPage = () => {
 
   return (
     <div className="product-details-page" data-testid={`product-${slug}`}>
-      {/* Product Gallery with test id */}
       <div className="product-image-section" data-testid="product-gallery">
         <div className="thumbnails">
           {product.gallery.map((img, index) => (
@@ -94,11 +90,9 @@ const ProductDetailsPage = () => {
                 <button
                   key={item.id}
                   onClick={() => handleAttributeSelect(attribute.id, item.value)}
-                  // Each attribute option gets a test id that matches the expected pattern.
-                  data-testid={`product-attribute-${attribute.id.toLowerCase()}-${item.value.toLowerCase()}`}
-                  className={`attribute-button ${
-                    selectedAttributes[attribute.id] === item.value ? "selected" : ""
-                  }`}
+                  // Removed .toLowerCase() for the item value
+                  data-testid={`product-attribute-${attribute.id.toLowerCase()}-${item.value}`}
+                  className={`attribute-button ${selectedAttributes[attribute.id] === item.value ? "selected" : ""}`}
                   style={attribute.type === "swatch" ? { backgroundColor: item.value } : {}}
                 >
                   {attribute.type !== "swatch" ? item.displayValue : ""}
