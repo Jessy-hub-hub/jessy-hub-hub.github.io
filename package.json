@@ -1,0 +1,40 @@
+{
+  "name": "my-react-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "homepage": "https://jessy-hub-hub.github.io",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "postbuild": "copy .nojekyll docs",
+    "predeploy": "npm run build",
+"deploy": "gh-pages -b main -d docs"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.12.4",
+    "graphql": "^16.10.0",
+    "graphql-request": "^7.1.2",
+    "graphql-tag": "^2.12.6",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.1.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/react": "^18.3.17",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "gh-pages": "^6.3.0",
+    "globals": "^15.13.0",
+    "vite": "^6.0.3",
+    "vite-plugin-svgr": "^4.3.0"
+  }
+}

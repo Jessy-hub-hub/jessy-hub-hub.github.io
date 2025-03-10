@@ -1,0 +1,154 @@
+/* Overall Page Layout for Product Details Page */
+.product-details-page {
+  position: relative;
+  display: flex;
+  width: 1250px;
+  height: 1020px;
+  margin: -95px auto; /* Push content below the header */
+  gap: 40px;
+  padding-top: 100px;
+  font-family: Arial, sans-serif;
+  align-items: flex-start; /* Align product details at the top */
+  border: 1px solid transparent; /* Initially invisible border */
+  transition: border 0.3s ease;
+}
+
+/* On hover, show only a blue border (no box-shadow) */
+.product-details-page:hover {
+  border-color: blue;
+}
+
+/* Thumbnails - Now completely separate from .product-image-section */
+.thumbnails {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: absolute;
+  left: 0; /* Ensure it’s positioned outside flexbox */
+  top: 120px; /* Adjust as needed */
+}
+
+.thumbnail {
+  width: 60px;
+  height: 49px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  object-fit: cover;
+  transition: transform 0.3s ease, border 0.3s ease;
+  margin-left: 20px;
+}
+
+.thumbnail.active {
+  border: 2px solid blue;
+  transform: scale(1.1);
+}
+
+/* Product Image & Details Section - Flexbox applied only here */
+.product-frame {
+  display: flex;
+  border: 2px solid transparent;  /* Blue frame */
+  padding: 20px;
+  gap: 20px;  /* Space between the image and details */
+  align-items: center;
+  flex: 1; /* Ensures it takes up remaining space */
+  margin-left: 100px; /* Moves right to avoid overlapping with thumbnails */
+}
+.product-frame:hover {
+  border-color: blue; /* Show blue border only on hover */
+}
+/* Main Image Wrapper */
+.main-image-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 400px;
+  flex: 0 0 auto;
+}
+
+.main-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+/* Arrow Styling for Main Image Navigation */
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  padding: 0.5rem;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.left-arrow {
+  left: 10px;
+}
+
+.right-arrow {
+  right: 10px;
+}
+
+.arrow:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Product Details Section - Positioned on the right side */
+.product-details-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Other styles for product details */
+.product-name {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.attribute-button,
+.color-swatch {
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.attribute-button.selected,
+.color-swatch.selected {
+  border: 2px solid black;
+}
+
+.color-swatch {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+}
+
+.product-price {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.add-to-cart-btn {
+  background-color: green;
+  color: white;
+  padding: 10px;
+  margin-top: 20px;
+  cursor: pointer;
+  border: none;
+}
+
+.add-to-cart-btn:disabled {
+  background-color: lightgrey;
+  cursor: not-allowed;
+}
+
+.product-description {
+  margin-top: 20px;
+}

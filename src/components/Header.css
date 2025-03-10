@@ -1,0 +1,76 @@
+/* Header styled to be part of the container */
+.header {
+  position: relative; /* Stays inside the container */
+  top: -8.2px;
+  margin-top: 60px;
+  left: 0;
+  width: 101.2%;  /* Match your container's width */
+  height: 50px;   /* Desired header height */
+  margin-left: 1px;
+  background: white;
+  z-index: 1100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid transparent; /* Initially invisible border */
+  transition: border 0.3s ease;
+}
+
+.header:hover,
+.header:focus {
+  border: 2px solid blue;  /* Blue border appears on hover/focus */
+}
+
+/* Navigation links styling */
+.header nav a {
+  margin-right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  font-family: 'Raleway', sans-serif;
+  font-weight: bold;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-decoration: none; /* Remove underline by default */
+}
+
+.header nav a:hover {
+  background-color: #f0f0f0;
+}
+
+/* Active link: underline and green text */
+.header nav a.active,
+.header nav a[data-testid="active-category-link"] {
+  text-decoration: underline;
+  color: rgb(59, 231, 59);
+}
+
+.header button[data-testid="cart-btn"] {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #00aaff;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.header button[data-testid="cart-btn"]:hover {
+  background-color: #0088cc;
+}
+
+.header button[data-testid="cart-btn"] span {
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+.hidden {
+  display: none;
+}

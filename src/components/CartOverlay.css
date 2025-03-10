@@ -1,0 +1,176 @@
+/* ======================== */
+/* Cart Overlay & Backdrop  */
+/* ======================== */
+
+/* Cart Overlay Container */
+.cart-overlay {
+  position: absolute;
+  top: 99.5px; /* Directly below the header */
+  right: 70px; /* Aligns with the container width */
+  width: 265px;
+  height: 60vh; /* Ensures a dynamic height */
+  background-color: #fff;
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.5);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 1000;
+  border-top: 1px solid #ccc; /* Joins visually with header */
+}
+.cart-overlay:hover {
+  border: 2px solid blue;
+}
+
+/* Header stays fixed at the top */
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: white;
+  z-index: 1100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 2px solid transparent;
+  transition: border 0.3s ease;
+}
+
+/* Backdrop stays fixed below the header */
+.backdrop {
+  position: absolute;
+  top: 98px; /* Directly under header */
+  left: 51.95%; /* Centered */
+  width: 1250px; /* Matches page content width */
+  height: 1020px; /* Stays within viewport */
+  background-color: rgba(0, 0, 0, 0.5);
+  transform: translateX(-50%);
+  z-index: 900;
+}
+.backdrop:hover {
+  border: 2px solid blue;
+}
+
+/* ======================== */
+/* Cart Item Styling        */
+/* ======================== */
+
+/* Cart Overlay Heading */
+.cart-overlay h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Container for all cart items */
+.cart-items-container {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Updated Cart Item Row */
+.cart-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Left Column: Product Details */
+.cart-item-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Center column: Quantity controls */
+.cart-item-quantity {
+  flex: 0 0 auto; /* Fixed size */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  margin: 0 1rem;
+}
+
+.cart-item-quantity button {
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: 1px solid #ccc;
+  color: #333;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.cart-item-quantity button:hover {
+  background-color: #f0f0f0;
+}
+
+.cart-item-quantity span {
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Right column: Product image */
+.cart-item-image {
+  flex: 0 0 auto; /* Fixed size */
+}
+
+.cart-item-image img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* ======================== */
+/* Cart Summary & Actions   */
+/* ======================== */
+
+/* Cart total and action buttons container */
+.cart-total-container {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Place Order Button */
+.place-order-btn {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border: none;
+  background-color: #5ece7b;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.place-order-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Error message styling */
+.error {
+  color: red;
+  margin-top: 0.5rem;
+}
+
+/* ======================== */
+/* Responsive Fixes         */
+/* ======================== */
+
+@media (max-width: 1250px) {
+  .backdrop {
+    width: 100%; /* Ensures backdrop fits within the container */
+  }
+}
