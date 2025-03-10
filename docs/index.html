@@ -5,7 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="/scandiweb/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Frontend</title>
-    <script type="module" crossorigin src="/assets/index-BWnbAINQ.js"></script>
+    <!-- This script checks for a "redirect" query parameter and updates the URL accordingly -->
+    <script>
+      if (window.location.search.includes('redirect=')) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectPath = urlParams.get('redirect');
+        if (redirectPath) {
+          // Decode the parameter in case it contains encoded characters
+          window.history.replaceState({}, document.title, decodeURIComponent(redirectPath));
+        }
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-TEHgySpG.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-B1QYn6jP.css">
   </head>
   <body>

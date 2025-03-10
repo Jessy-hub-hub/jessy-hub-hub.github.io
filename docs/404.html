@@ -2,16 +2,13 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Page Not Found</title>
+    <title>Redirecting...</title>
     <script type="text/javascript">
-      var redirect =
-        window.location.protocol +
-        "//" +
-        window.location.host +
-        "/index.html" +
-        window.location.search +
-        window.location.hash;
-      window.location.replace(redirect);
+      // Capture the entire path, including query and hash if present
+      var intendedPath = window.location.pathname + window.location.search + window.location.hash;
+      // Build a URL that points to index.html, passing the original path as a "redirect" query parameter
+      var redirectUrl = window.location.protocol + "//" + window.location.host + "/index.html?redirect=" + encodeURIComponent(intendedPath);
+      window.location.replace(redirectUrl);
     </script>
   </head>
   <body>
