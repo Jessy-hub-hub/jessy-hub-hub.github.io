@@ -106,7 +106,7 @@ const CartOverlay = ({ isOpen, onClose }) => {
       <div className="backdrop" onClick={onClose} />
       <div className="cart-overlay" data-testid="cart-overlay" role="dialog">
         {/* The heading now shows strictly "My Bag" (no count here) */}
-        <h3>My Bag</h3>
+        <h3>My Baggg</h3>
         {/* (Removed the overlay cart count element to avoid duplicate count text) */}
 
         <div className="cart-items-container">
