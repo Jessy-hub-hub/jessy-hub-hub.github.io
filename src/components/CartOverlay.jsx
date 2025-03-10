@@ -1,12 +1,11 @@
-// components/CartOverlay.js
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import { useCart } from "../context/CartContext";
 import "./CartOverlay.css";
 import { gql, useMutation } from "@apollo/client";
 import { slugify } from "../utils/slugify.js";
 
-// Helper function to create slugs
+// Helper: if the product is "ps-5", return a custom slug.
 const getSlug = (product) => {
   if (product.id === "ps-5") return "playstation-5";
   return slugify(product.name);
@@ -26,62 +25,30 @@ const CREATE_ORDER = gql`
   }
 `;
 
-// Helper function to render attributes with a dynamic data-testid
-const renderAttribute = (attrKey, value) => {
-  const testId = `product-attribute-${attrKey}-${value}`;
-  return (
-    <p key={attrKey} className="cart-item-option" data-testid={testId}>
-      {attrKey}: {value}
-    </p>
-  );
-};
-
 const CartOverlay = ({ isOpen, onClose }) => {
   const { cart, updateQuantity, clearCart, removeFromCart } = useCart();
-  const initialCartLengthRef = useRef(null);
 
-  // Always call hooks unconditionally
-  useEffect(() => {
-    if (isOpen && initialCartLengthRef.current === null) {
-      initialCartLengthRef.current = cart.length;
-    }
-  }, [isOpen, cart]);
+  // Always use the real cart data
+  const displayCart = cart;
 
-  useEffect(() => {
-    if (isOpen && initialCartLengthRef.current > 0 && cart.length === 0) {
-      onClose();
-      initialCartLengthRef.current = null;
-    }
-  }, [cart, isOpen, onClose]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      initialCartLengthRef.current = null;
-    }
-  }, [isOpen]);
-
-  // Compute totals (always run)
-  const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cart.reduce(
+  // Calculate total items and total price
+  const totalQuantity = displayCart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = displayCart.reduce(
     (sum, item) => sum + (item.price?.amount || 0) * item.quantity,
     0
   );
 
-  // useMutation hook is always called
+  // Mutation to simulate placing an order
   const [createOrder, { loading, error }] = useMutation(CREATE_ORDER, {
     onCompleted: () => {
       clearCart();
-      onClose();
       alert("Order placed successfully!");
     },
   });
 
-  // Now conditionally return null if overlay is not open.
-  if (!isOpen) return null;
-
   const handlePlaceOrder = () => {
-    if (cart.length === 0) return;
-    const orderProducts = cart.map((item) => ({
+    if (displayCart.length === 0) return;
+    const orderProducts = displayCart.map((item) => ({
       productId: item.id,
       quantity: item.quantity,
       totalPrice: (item.price?.amount || 0) * item.quantity,
@@ -91,72 +58,74 @@ const CartOverlay = ({ isOpen, onClose }) => {
 
   const handleDecrease = (item) => {
     if (item.quantity === 1) {
-      removeFromCart(item, item.options);
+      removeFromCart(item);
     } else {
-      updateQuantity(item, -1, item.options);
+      updateQuantity(item, -1);
     }
   };
 
-  // Render the overlay in a portal attached to #modal-root or document.body
-  const modalContainer = document.getElementById("modal-root") || document.body;
-
-  return ReactDOM.createPortal(
+  const overlayContent = (
     <>
-      {/* Backdrop */}
-      <div className="backdrop" onClick={onClose} />
-      <div className="cart-overlay" data-testid="cart-overlay" role="dialog">
-        {/* The heading now shows strictly "My Bag" (no count here) */}
+      {isOpen && <div className="backdrop" onClick={onClose} />}
+      <div
+        className="cart-overlay"
+        data-testid="cart-overlay"
+        role="dialog"
+        style={{ display: isOpen ? "flex" : "none" }}
+      >
+        {/* Updated heading: Removed the count from the heading */}
         <h3>My Bag</h3>
-        {/* (Removed the overlay cart count element to avoid duplicate count text) */}
-
+        {/* The cart count should be rendered in a dedicated element (e.g., a cart button):
+            <span data-testid="cart-btn">({totalQuantity} {totalQuantity === 1 ? "Item" : "Items"})</span>
+        */}
         <div className="cart-items-container">
-          {cart.length === 0 ? (
-            <p>Your cart is empty.</p>
-          ) : (
-            cart.map((item) => {
-              const slug = getSlug(item);
-              const attributesToRender = item.selectedAttributes || item.options;
-              return (
-                <div key={item.id} className="cart-item">
-                  <div className="cart-item-details">
-                    <p className="cart-item-name">{item.name}</p>
-                    {attributesToRender &&
-                      Object.entries(attributesToRender).map(([attrKey, value]) =>
-                        renderAttribute(attrKey, value)
-                      )}
-                    <p className="cart-item-price">
-                      {item.price?.currency?.symbol || "$"}
-                      {item.price?.amount.toFixed(2)}
-                    </p>
-                  </div>
-                  <div className="cart-item-quantity">
-                    <button onClick={() => handleDecrease(item)}>-</button>
-                    <span>{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item, 1, item.options)}>
-                      +
-                    </button>
-                  </div>
-                  <div className="cart-item-image">
-                    <img src={item.gallery[0]} alt={item.name} />
-                  </div>
+          {displayCart.map((item) => {
+            const slug = getSlug(item);
+            // Use options (or selectedAttributes) to display attributes.
+            const attributesToRender = item.selectedAttributes || item.options;
+            return (
+              <div key={item.id} className="cart-item" data-testid={`product-${slug}`}>
+                <div className="cart-item-details">
+                  <p className="cart-item-name">{item.name}</p>
+                  {attributesToRender &&
+                    Object.entries(attributesToRender).map(([attrKey, value]) => (
+                      <p
+                        key={attrKey}
+                        className="cart-item-option"
+                        data-testid={`product-attribute-${attrKey.toLowerCase()}-${value}`}
+                      >
+                        {attrKey}: {value}
+                      </p>
+                    ))}
+                  <p className="cart-item-price">
+                    {item.price?.currency?.symbol || "$"}
+                    {item.price?.amount || 0}
+                  </p>
                 </div>
-              );
-            })
-          )}
+                <div className="cart-item-quantity">
+                  <button onClick={() => handleDecrease(item)}>-</button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => updateQuantity(item, 1)}>+</button>
+                </div>
+                <div className="cart-item-image">
+                  <img src={item.gallery[0]} alt={item.name} />
+                </div>
+              </div>
+            );
+          })}
         </div>
-
         <div className="cart-total-container">
           <span className="cart-total-label">Total:</span>
           <span className="cart-total-amount">
-            {cart.length > 0 && (cart[0].price?.currency?.symbol || "$")}
+            {displayCart.length > 0 &&
+              (displayCart[0].price?.currency?.symbol || "$")}
             {totalPrice.toFixed(2)}
           </span>
         </div>
-
         <button
           onClick={handlePlaceOrder}
-          disabled={cart.length === 0 || loading}
-          className={`place-order-btn ${cart.length === 0 ? "disabled" : "active"}`}
+          disabled={displayCart.length === 0 || loading}
+          className={`place-order-btn ${displayCart.length === 0 ? "disabled" : "active"}`}
         >
           {loading ? "Placing Order..." : "Place Order"}
         </button>
@@ -164,9 +133,11 @@ const CartOverlay = ({ isOpen, onClose }) => {
           <p className="error">Failed to place order. Please try again.</p>
         )}
       </div>
-    </>,
-    modalContainer
+    </>
   );
+
+  const modalContainer = document.getElementById("modal-root") || document.body;
+  return ReactDOM.createPortal(overlayContent, modalContainer);
 };
 
 export default CartOverlay;
