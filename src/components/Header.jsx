@@ -20,7 +20,7 @@ const Header = () => {
     <header className="header">
       <nav>
         <Link to="/all" {...getCategoryLinkProps("all")}>all</Link>
-        <Link to="/tech" {...getCategoryLinkProps("tech")}>tech</Link>
+        <Link to="/tech" {...getCategoryLinkProps("tech")}>techh</Link>
         <Link to="/clothes" {...getCategoryLinkProps("clothes")}>clothes</Link>
       </nav>
       <button data-testid="cart-btn" onClick={toggleCartOverlay}>
