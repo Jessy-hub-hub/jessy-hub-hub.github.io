@@ -1,24 +1,20 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/scandiweb/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Frontend</title>
-    <script type="module" crossorigin src="/assets/index-BBdQQHmQ.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DoSojd6w.css" />
-    <script>
-      // Optionally include the redirect query parameter logic if needed.
-      if (window.location.search.includes('redirect=')) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirectPath = urlParams.get('redirect');
-        if (redirectPath) {
-          window.history.replaceState({}, document.title, redirectPath);
-        }
-      }
+    <title>Page Not Found</title>
+    <script type="text/javascript">
+      var redirect =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        "/index.html" +
+        window.location.search +
+        window.location.hash;
+      window.location.replace(redirect);
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <p>Redirecting...</p>
   </body>
 </html>
